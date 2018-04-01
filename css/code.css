@@ -1,0 +1,51 @@
+.code {
+	margin: 0px;
+	line-height: 1.2;
+	font-family: 'Source Code Pro', monospace;
+}
+
+.function_keyword {
+
+}
+
+.function {
+	
+}
+
+.var_keyword {
+	color: #4184e2;
+}
+
+.var {
+
+}
+
+.function_keyword {
+	color: #4184e2;
+}
+
+.operation {
+	color: #e24192;
+}
+
+.comment {
+	color: #9b9b9b;
+}
+
+.constant {
+	color: #9b4ee8;
+}
+
+.this_keyword {
+	color : #e8874e;
+}
+
+.condition_keyword {
+	color: #e24192;
+}
+
+.tab1 { padding-left: 2em; }
+.tab2 { padding-left: 4em; }
+.tab3 { padding-left: 6em; }
+.tab4 { padding-left: 8em; }
+.tab5 { padding-left: 10em; }
