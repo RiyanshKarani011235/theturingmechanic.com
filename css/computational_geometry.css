@@ -1,3 +1,12 @@
 svg.plane {
     background-color: rgb(255, 255, 200)
 }
+
+path.edge {
+    stroke: black;
+    stroke-width: 2px;
+}
+
+circle.vertex {
+    padding: 2em
+}
