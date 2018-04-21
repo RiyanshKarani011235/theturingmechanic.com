@@ -1,0 +1,85 @@
+
+> theturingmechanic.com@0.1.0 start /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> python start.py && react-scripts-ts start "hello"
+
+index.tsx modified successfully!
+Failed to load tsconfig.json: Missing baseUrl in compilerOptions
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Starting type checking and linting service...
+Using [1m1 worker[22m with [1m2048MB[22m memory limit
+Watching: [90m/Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/src[39m
+Starting the development server...
+
+ts-loader: Using typescript@2.8.3 and /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/tsconfig.json
+Compiled successfully!
+
+You can now view theturingmechanic.com in the browser.
+
+  Local:            http://localhost:3000/
+  On Your Network:  http://192.168.1.84:3000/
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+
+> theturingmechanic.com@0.1.0 start /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> python start.py | react-scripts-ts start "hello"
+
+Failed to load tsconfig.json: Missing baseUrl in compilerOptions
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Starting type checking and linting service...
+Using [1m1 worker[22m with [1m2048MB[22m memory limit
+Watching: [90m/Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/src[39m
+Starting the development server...
+
+ts-loader: Using typescript@2.8.3 and /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/tsconfig.json
+Compiled successfully!
+
+You can now view theturingmechanic.com in the browser.
+
+  Local:            http://localhost:3000/
+  On Your Network:  http://192.168.1.84:3000/
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+
+> theturingmechanic.com@0.1.0 start /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> python start.py "hello"
+
+index.tsx modified successfully!
+
+> theturingmechanic.com@0.1.0 start /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> python start.py "hello"
+
+index.tsx modified successfully!
+
+> theturingmechanic.com@0.1.0 start /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> npm run-script build && react-scripts-ts start "hello"
+
+
+> theturingmechanic.com@0.1.0 build /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com
+> python build.py --
+
+Failed to load tsconfig.json: Missing baseUrl in compilerOptions
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Found no baseUrl in tsconfig.json, not applying tsconfig-paths-webpack-plugin
+Starting type checking and linting service...
+Using [1m1 worker[22m with [1m2048MB[22m memory limit
+Watching: [90m/Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/src[39m
+Starting the development server...
+
+ts-loader: Using typescript@2.8.3 and /Users/riyanshkarani/Documents/projects_working_directory/theturingmechanic.com/tsconfig.json
+Compiled successfully!
+
+You can now view theturingmechanic.com in the browser.
+
+  Local:            http://localhost:3000/
+  On Your Network:  http://192.168.1.84:3000/
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+index.tsx modified successfully!

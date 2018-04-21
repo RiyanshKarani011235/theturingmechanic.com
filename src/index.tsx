@@ -1,7 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import InteractivePlane2D from './components/InteractivePlane2D';
-import NonInteractivePlane2D from './components/NonInteractivePlane2D';
+import App from './App.temporalclustering';
+import './index.css';
+import registerServiceWorker from './registerServiceWorker';
 
-// Render the root component normally
-ReactDOM.render(<NonInteractivePlane2D planeWidth={800}/>, document.getElementById('root'));
+ReactDOM.render(
+  <App />,
+  document.getElementById('root') as HTMLElement
+);
+registerServiceWorker();
