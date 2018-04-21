@@ -2,11 +2,12 @@
   "name": "theturingmechanic.com",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "convexHull.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config webpack.config.babel.js --progress --hot",
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "build-convex-hull": "webpack --config webpack.config.convexHull.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/d3": "^5.0.0",
     "@types/prop-types": "^15.5.2",
+    "@types/react-bootstrap": "^0.32.6",
     "@types/webpack-env": "^1.13.5",
     "awesome-typescript-loader": "^3.4.1",
     "babel-core": "^6.26.0",
@@ -40,6 +42,7 @@
     "d3": "^5.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.0",
+    "react-bootstrap": "^0.32.1",
     "react-dom": "^16.3.0",
     "react-hot-loader": "^4.0.0-beta.22"
   }
