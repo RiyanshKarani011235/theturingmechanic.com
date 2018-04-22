@@ -2,7 +2,6 @@ import * as React from 'react';
 // import * as d3 from 'd3';
 import {Plane1D} from './Plane1D';
 import { Row, Checkbox, Col, Grid } from 'react-bootstrap';
-import Measure, { MeasuredComponentProps } from 'react-measure';
 
 export interface ITemporalSamplingProps {
     numberOfLevels: number,
@@ -12,7 +11,6 @@ export interface ITemporalSamplingProps {
 
 export interface ITemporalSamplingState {
     points: {[id: string]: {x: number, y: number}}[],
-    width: number
 }
 
 export class TemporalSampling extends React.Component<ITemporalSamplingProps, ITemporalSamplingState> {
@@ -29,8 +27,7 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
         let points = [];
         for (let i=0; i<this.props.numberOfLevels; i++) points.push({});
         this.state = {
-            points: points,
-            width: 0
+            points: points
         }
     }
 
@@ -41,21 +38,6 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
     render() {
         return (
             <div>
-                <Measure
-                    bounds
-                    onResize={(contentRect) => {
-                        this.setState({width: (contentRect as {bounds: {width: number}}).bounds.width})
-                    }}
-                >
-                    {(({measureRef}) => {
-                        return (
-                            <div ref={measureRef}>
-                                <svg width={'100%'} />
-                            </div>
-                        )
-                    }) as React.StatelessComponent<MeasuredComponentProps>}
-                </Measure>
-
                 <svg
                     width={'100%'}
                     height={((this.props.levelHeight as number) + (this.props.distanceBetweenLevels as number)) * this.props.numberOfLevels - (this.props.distanceBetweenLevels as number)}
@@ -66,7 +48,6 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
                             for(let i=0; i<this.props.numberOfLevels; i++) sampleIds.push(i);
                             return sampleIds.map((id: number) => {
                                 return <Plane1D
-                                    width={this.state.width}
                                     height={this.props.levelHeight as number}
                                     x={0}
                                     y={((this.props.levelHeight as number) + (this.props.distanceBetweenLevels as number)) * id}

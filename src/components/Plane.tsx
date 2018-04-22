@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import * as React from 'react';
 import * as uniqud from 'uniqid';
+import Measure, { MeasuredComponentProps } from 'react-measure';
 
 import {Point} from './Point';
 
@@ -8,7 +9,6 @@ import {Point} from './Point';
 import '../css/Plane.css';
 
 export interface IPlaneProps {
-    width: number,
     height: number,
     background_color?: string,
     onPointsUpdated?: (points: {[id: string]: {x: number, y: number}}) => void,
@@ -40,7 +40,7 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
         // initialize state
         this.state = {
             points: {},
-            width: this.props.width
+            width: 0
         }
 
         // initialize instance variables
@@ -70,6 +70,28 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
                 ref={node => this.svgNode = (node as SVGElement)}
                 className='plane'
             >
+                <Measure
+                    bounds
+                    onResize={(contentRect) => {
+                        this.updateWidth((contentRect as {bounds: {width: number}}).bounds.width);
+                    }}
+                >
+                    {(({measureRef}) => {
+                        return (
+                            <svg 
+                                ref={measureRef}
+                                width={'100%'}
+                            >
+                                <rect
+                                    width={'100%'}
+                                    height={this.props.height}
+                                    opacity={0}
+                                />
+                            </svg>
+                        )
+                    }) as React.StatelessComponent<MeasuredComponentProps>}
+                </Measure>
+
                 <rect
                     className='plane'
                     width={'100%'}
@@ -108,28 +130,6 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
             this.onClick();
         })
         .call(svgDrag as d3.DragBehavior<SVGElement, {}, {}>);
-    }
-
-    static getDerivedStateFromProps(nextProps: IPlaneProps, prevState: IPlaneState) {
-        let newState = {};
-        if (nextProps.width !== prevState.width) {
-            // width was modified, scale points to fit inside
-            // a plane with this new width
-            newState['width'] = nextProps.width;
-
-            if (prevState.width === 0) {
-                // this method called the first time after
-                // component rendered. Don't scale points
-                return newState;
-            }
-            
-            newState['points'] = {};
-            let scale: number = nextProps.width / prevState.width;
-            Object.keys(prevState.points).forEach((id: string) => {
-                newState['points'][id] = {x: prevState.points[id].x * scale, y: prevState.points[id].y}
-            })
-        }
-        return newState;
     }
 
     /*
@@ -190,7 +190,7 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
         // boundary conditions
         x = x < (this.props.padding as number) ? (this.props.padding as number) : x;
         y = y < (this.props.padding as number) ? (this.props.padding as number) : y;
-        x = x > (this.props.width - (this.props.padding as number)) ? (this.props.width - (this.props.padding as number)) : x;
+        x = x > (this.state.width - (this.props.padding as number)) ? (this.state.width - (this.props.padding as number)) : x;
         y = y > (this.props.height - (this.props.padding as number)) ? (this.props.height - (this.props.padding as number)) : y;
 
         this.setState((prevState: IPlaneState, props: IPlaneProps) => {
@@ -199,6 +199,30 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
             return {
                 points: prevState.points
             }
+        })
+    }
+
+    public updateWidth(newWidth: number) {
+        this.setState((prevState: IPlaneState, props: IPlaneProps) => {
+            let newState = {};
+            if (newWidth !== prevState.width) {
+                // width was modified, scale points to fit inside
+                // a plane with this new width
+                newState['width'] = newWidth;
+
+                if (prevState.width === 0) {
+                    // this method called for the first time after
+                    // component rendered. Don't scale the points
+                    // (in fact, there can be no points)
+                    return newState;
+                }
+
+                newState['points'] = {};
+                let scale: number = newWidth / prevState.width;
+                Object.keys(prevState.points).forEach((id: string) => {
+                    newState['points'][id] = {x: prevState.points[id].x * scale, y: prevState.points[id].y}
+                })
+            } return newState;
         })
     }
 
