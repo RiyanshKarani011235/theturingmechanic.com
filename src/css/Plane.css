@@ -1,0 +1,6 @@
+rect.plane {
+    fill: rgb(255, 255, 220);
+    stroke: rgb(200, 200, 150);
+    rx: 15px;
+    ry: 15px;
+}
