@@ -1,7 +1,7 @@
 import * as React from 'react';
 // import * as d3 from 'd3';
-import {Plane1D} from './Plane1D';
-import { Row, Checkbox, Col, Grid } from 'react-bootstrap';
+import {TemporalSample} from './TemporalSample';
+import { Row, Checkbox, Grid, Col } from 'react-bootstrap';
 
 export interface ITemporalSamplingProps {
     numberOfLevels: number,
@@ -11,6 +11,8 @@ export interface ITemporalSamplingProps {
 
 export interface ITemporalSamplingState {
     points: {[id: string]: {x: number, y: number}}[],
+    show2Rnet: boolean,
+    r: number
 }
 
 export class TemporalSampling extends React.Component<ITemporalSamplingProps, ITemporalSamplingState> {
@@ -27,7 +29,9 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
         let points = [];
         for (let i=0; i<this.props.numberOfLevels; i++) points.push({});
         this.state = {
-            points: points
+            points: points,
+            show2Rnet: false,
+            r: 0
         }
     }
 
@@ -47,7 +51,9 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
                             let sampleIds = [];
                             for(let i=0; i<this.props.numberOfLevels; i++) sampleIds.push(i);
                             return sampleIds.map((id: number) => {
-                                return <Plane1D
+                                return <TemporalSample
+                                    r={this.state.r}
+                                    show2RNet={this.state.show2Rnet}
                                     height={this.props.levelHeight as number}
                                     x={0}
                                     y={((this.props.levelHeight as number) + (this.props.distanceBetweenLevels as number)) * id}
@@ -63,8 +69,15 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
                 <br/><br/><br/>
                 <Grid>
                 <Row>
-                    <Col md={2}><Checkbox/></Col>
-                    <Col md={4}><p>Show 2R-Net</p></Col>
+                    <Checkbox
+                       onChange={e => {
+                            this.setState((prevState: ITemporalSamplingState, props: ITemporalSamplingProps) => {
+                                return {show2Rnet: !prevState.show2Rnet}
+                            })
+                       }}
+                    />
+                    <Col md={1}/>
+                    <p>Show 2R-net</p>
                 </Row>
                 </Grid>
             </div>

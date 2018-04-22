@@ -22,9 +22,40 @@ export interface IPlaneState {
     width: number
 }
 
-export class Plane extends React.Component<IPlaneProps, IPlaneState> {
+export function getInitialState() {
+    return {
+        points: {},
+        width: 0
+    }
+}
+
+export abstract class Plane<Props extends IPlaneProps, State extends IPlaneState> extends React.Component<Props, State> {
     private svgNode: SVGElement;
     private dragId: string | null;
+
+    abstract getInitialState(): State;
+    
+    public getRenderedPoints() {
+        return (
+            <svg>
+                {
+                    Object.keys(this.state.points).map((key: string, index: number) => {
+                        const point: {x: number, y: number} = this.state.points[key];
+                        return <Point
+                            id={key}
+                            cx={point.x}
+                            cy={point.y}
+                            onPointDragStart={this.onPointDragStart}
+                            onPointDragEnd={this.onPointDragEnd}
+                            onPointDrag={this.onPointDrag}
+                            onPointClick={this.onPointClick}
+                            key={key}
+                        />
+                    })
+                }
+            </svg>
+        )
+    }
 
     static defaultProps = {
         background_color: 'rgb(255, 255, 200)',
@@ -34,14 +65,11 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
         padding: 10,
     }
 
-    constructor(props: IPlaneProps) {
+    constructor(props: Props) {
         super(props);
 
         // initialize state
-        this.state = {
-            points: {},
-            width: 0
-        }
+        this.state = this.getInitialState();
 
         // initialize instance variables
         this.dragId = null;
@@ -98,21 +126,7 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
                     height={this.props.height}
                 />
 
-                {
-                    Object.keys(this.state.points).map((key: string, index: number) => {
-                        const point: {x: number, y: number} = this.state.points[key];
-                        return <Point
-                            id={key}
-                            cx={point.x}
-                            cy={point.y}
-                            onPointDragStart={this.onPointDragStart}
-                            onPointDragEnd={this.onPointDragEnd}
-                            onPointDrag={this.onPointDrag}
-                            onPointClick={this.onPointClick}
-                            key={key}
-                        />
-                    })
-                }
+                {this.getRenderedPoints()}
             </svg>
         )
     }
@@ -138,7 +152,11 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
 
     public onClick() {
         let coordinates = d3.mouse(this.getSvgNode() as d3.ContainerElement);
-        this.addPoint(coordinates[0], coordinates[1]);
+        let x: number = coordinates[0] < (this.props.padding as number) ? (this.props.padding as number) : coordinates[0];
+        x = coordinates[0] > this.state.width - (this.props.padding as number) ? this.state.width - (this.props.padding as number) : coordinates[0];
+        let y: number = coordinates[1] < (this.props.padding as number) ? (this.props.padding as number) : coordinates[1];
+        y = coordinates[1] > this.props.height - (this.props.padding as number) ? this.props.height - (this.props.padding as number): coordinates[1];
+        this.addPoint(x, y);
     }
 
     /*
@@ -157,7 +175,7 @@ export class Plane extends React.Component<IPlaneProps, IPlaneState> {
         if (this.dragId === id) this.updatePointCoordinates(id, d3.event.x, d3.event.y);
     }
 
-    private onPointClick(id: string) {
+    public onPointClick(id: string) {
         this.removePoint(id);
         d3.event.stopPropagation();
     }

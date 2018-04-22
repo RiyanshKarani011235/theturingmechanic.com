@@ -22,13 +22,13 @@ class App extends React.Component {
 			<code>Hello World!</code>
 			</p>
 
-			<Grid>
-				<Row>
-					<Col md={2}></Col>
-					<Col md={8}>
+			<Grid width='100%'>
+				<Row width='100%'>
+					<Col md={4} lg={3}></Col>
+					<Col md={4} lg={6}>
 						<TemporalSampling numberOfLevels={NUMBER_OF_CLUSTERS}/>
 					</Col>
-					<Col md={2}></Col>
+					<Col md={4} lg={3}></Col>
 				</Row>
 			</Grid>
       	</div>
