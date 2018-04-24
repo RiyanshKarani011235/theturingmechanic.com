@@ -104,6 +104,7 @@ export class Point extends React.Component<PointProps, PointState> {
         let newState = {};
         if (nextProps.cx !== prevState.cx) newState['cx'] = nextProps.cx;
         if (nextProps.cy !== prevState.cy) newState['cy'] = nextProps.cy;
+        if (nextProps.mouseOutColor !== prevState.color) newState['color'] = nextProps.mouseOutColor;
         return newState;
     }
 

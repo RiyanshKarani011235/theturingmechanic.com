@@ -2,6 +2,11 @@ import * as React from 'react';
 // import * as d3 from 'd3';
 import {TemporalSample} from './TemporalSample';
 import { Row, Checkbox, Grid, Col } from 'react-bootstrap';
+import Slider from 'rc-slider';
+import {InlineMath} from 'react-katex';
+import 'rc-slider/assets/index.css';
+import 'katex/dist/katex.min.css';
+import '../css/TemporalSampling.css';
 
 export interface ITemporalSamplingProps {
     numberOfLevels: number,
@@ -12,7 +17,10 @@ export interface ITemporalSamplingProps {
 export interface ITemporalSamplingState {
     points: {[id: string]: {x: number, y: number}}[],
     show2Rnet: boolean,
-    r: number
+    showFlowNetwork: boolean,
+    r: number,
+    k: number,
+    delta: number
 }
 
 export class TemporalSampling extends React.Component<ITemporalSamplingProps, ITemporalSamplingState> {
@@ -31,7 +39,10 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
         this.state = {
             points: points,
             show2Rnet: false,
-            r: 0
+            showFlowNetwork: false,
+            r: 0,
+            k: 0,
+            delta: 0
         }
     }
 
@@ -69,15 +80,77 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
                 <br/><br/><br/>
                 <Grid>
                 <Row>
-                    <Checkbox
-                       onChange={e => {
-                            this.setState((prevState: ITemporalSamplingState, props: ITemporalSamplingProps) => {
-                                return {show2Rnet: !prevState.show2Rnet}
-                            })
-                       }}
-                    />
-                    <Col md={1}/>
-                    <p>Show 2R-net</p>
+                    <Col md={6}>
+                        <Row>
+                            <Checkbox
+                            onChange={e => {
+                                    this.setState((prevState: ITemporalSamplingState, props: ITemporalSamplingProps) => {
+                                        return {show2Rnet: !prevState.show2Rnet}
+                                    })
+                            }}
+                            />
+                            <Col md={1}/>
+                            <p>Show 2R-net</p>
+                            <Col md={1}/>
+                        </Row>
+
+                        <Row>
+                            <Checkbox
+                            onChange={e => {
+                                    this.setState((prevState: ITemporalSamplingState, props: ITemporalSamplingProps) => {
+                                        return {showFlowNetwork: !prevState.showFlowNetwork}
+                                    })
+                            }}
+                            />
+                            <Col md={1}/>
+                            <p>Show Flow Network</p>
+                            <Col md={1}/>
+                        </Row>
+                    </Col>
+
+                    <Col md={6}>
+
+                        <Row>
+                            <Slider 
+                                className='rslider'
+                                min={0}
+                                max={100}
+                                onChange={(k: number) => {
+                                    this.setState({k: k})
+                                }}
+                            />
+                            <Col md={1}/>
+                            <p>{'k = ' + this.state.k}</p>
+                        </Row>
+
+                        <Row>
+                            <Slider 
+                                className='rslider'
+                                min={0}
+                                max={100}
+                                onChange={(r: number) => {
+                                    this.setState({r: r})
+                                }}
+                            />
+                            <Col md={1}/>
+                            <p>{'r = ' + this.state.r}</p>
+                        </Row>
+
+                        <Row>
+                            <Slider 
+                                className='rslider'
+                                min={0}
+                                max={100}
+                                onChange={(delta: number) => {
+                                    this.setState({delta: delta})
+                                }}
+                            />
+                            <Col md={1}/>
+                            <p><InlineMath>\delta</InlineMath>{' = ' + this.state.delta}</p>
+                        </Row>
+                        
+                    </Col>
+
                 </Row>
                 </Grid>
             </div>
