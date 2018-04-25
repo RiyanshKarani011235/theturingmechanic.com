@@ -11,7 +11,7 @@ export class GraphEdge {
     outgoingVertex: GraphVertex;
     minFlow: number;
     maxFlow: number;
-    constructor(incomingVertex: GraphVertex, outgoingVertex: GraphVertex, minFlow: number, maxFlow: number) {
+    constructor(outgoingVertex: GraphVertex, incomingVertex: GraphVertex, minFlow: number, maxFlow: number) {
         this.incomingVertex = incomingVertex;
         this.outgoingVertex = outgoingVertex;
         this.minFlow = minFlow;
@@ -23,18 +23,20 @@ export class DirectedGraph {
     edges: {[id: string]: string[]}[]; // adjacency list
     vertices: GraphVertex[];
     vertexReverseLookupTable: {[id: string]: GraphVertex};
-    minFlow: {[id: string]: number};
-    maxFlow: {[id: string]: number};
+    minFlow: {[id: string]: number}[];
+    maxFlow: {[id: string]: number}[];
     constructor() {
         this.edges = [];
         this.vertices = [];
         this.vertexReverseLookupTable = {}
+        this.minFlow = [];
+        this.maxFlow = [];
     }
 
     addVertex(vertex: GraphVertex) {
         this.vertices.push(vertex);
         this.vertexReverseLookupTable[vertex.id] = vertex;
-        this.edges[vertex.id] = {};
+        this.edges[vertex.id] = [];
     }
 
     addEdge(edge: GraphEdge) {

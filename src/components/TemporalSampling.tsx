@@ -129,7 +129,7 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
 
                                 for (let level1Point of level1Points) {
                                     for (let level2Point of level2Points) {
-                                        if (Math.abs(level1Point.x - level2Point.x) <= this.state.r) {
+                                         if (Math.abs(level1Point.x - level2Point.x) <= this.state.r + this.state.delta) {
                                             returnValue.push(
                                                 <line
                                                     x1={level1Point.x}
@@ -251,6 +251,8 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
     onShowTwoRNetUpdated() {
         this.updateTwoRNet();
         this.setState({show2Rnet: !this.state.show2Rnet});
+        this.updateNetworkGraph();
+        console.log(this.state.networkGraph);
     }
 
     updateTwoRNet() {
@@ -268,10 +270,12 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
         }
     }
 
-    computeNetworkGraph() {
+    updateNetworkGraph() {
         let newGraph = new DirectedGraph();
         let sourceVertex = new TemporalNetworkVertex(uniqud(), 0, 0);
         let sinkVertex = new TemporalNetworkVertex(uniqud(), 0, 0);
+        newGraph.addVertex(sourceVertex);
+        newGraph.addVertex(sinkVertex);
 
         for (let i=0; i<this.props.numberOfLevels - 1; i++) {
             let level1 = this.state.points_[i];
@@ -281,28 +285,50 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
             let level1OutgoingVertices: TemporalNetworkVertex[] = [];
             let level2IncomingVertices: TemporalNetworkVertex[] = [];
             let level2OutgoingVertices: TemporalNetworkVertex[] = [];
+            let level1TwoRNet: {id: string, x: number, y: number}[] = this.state.twoRNets[i];
+            let level2TwoRNet: {id: string, x: number, y: number}[] = this.state.twoRNets[i+1];
 
             // level 1 vertices
+            let currentCenterIndex = 0;
             Object.keys(level1)
             .map((id: string) => {
                 let point = level1[id];
-                level1IncomingVertices.push(new TemporalNetworkVertex(id + ':inc', point.x, point.y));
-                level1OutgoingVertices.push(new TemporalNetworkVertex(id + ':out', point.x, point.y));
+                let incomingVertex = new TemporalNetworkVertex(id + ':inc', point.x, point.y);
+                let outgoingVertex = new TemporalNetworkVertex(id + ':out', point.x, point.y);
+                level1IncomingVertices.push(incomingVertex);
+                level1OutgoingVertices.push(outgoingVertex);
+                if (i === 0) {
+                    newGraph.addVertex(incomingVertex);
+                    newGraph.addVertex(outgoingVertex);
+                    if (currentCenterIndex < level1TwoRNet.length  && level1TwoRNet[currentCenterIndex].id === id) {
+                        currentCenterIndex++;
+                        newGraph.addEdge(new GraphEdge(outgoingVertex, incomingVertex, 1, Infinity));
+                    } else newGraph.addEdge(new GraphEdge(outgoingVertex, incomingVertex, 0, Infinity));
+                }
             });
 
             // level 2 vertices
+            currentCenterIndex = 0;
             Object.keys(level2)
             .map((id: string) => {
                 let point = level2[id];
-                level2IncomingVertices.push(new TemporalNetworkVertex(id + ':inc', point.x, point.y));
-                level2OutgoingVertices.push(new TemporalNetworkVertex(id + ':out', point.x, point.y));
+                let incomingVertex = new TemporalNetworkVertex(id + ':inc', point.x, point.y);
+                let outgoingVertex = new TemporalNetworkVertex(id + ':out', point.x, point.y);
+                level2IncomingVertices.push(incomingVertex);
+                level2OutgoingVertices.push(outgoingVertex);
+                newGraph.addVertex(incomingVertex);
+                newGraph.addVertex(outgoingVertex);
+                if (currentCenterIndex < level2TwoRNet.length && level2TwoRNet[currentCenterIndex].id === id) {
+                    currentCenterIndex++;
+                    newGraph.addEdge(new GraphEdge(outgoingVertex, incomingVertex, 1, Infinity));
+                } else newGraph.addEdge(new GraphEdge(outgoingVertex, incomingVertex, 0, Infinity));
             });
 
             // connect source to level1 incoming vertices
             if (i === 0) {
                 // add vertex from source to all vertices of level 1
                 let vertex: TemporalNetworkVertex;
-                for (vertex of level1IncomingVertices) {
+                for (vertex of level1OutgoingVertices) {
                     newGraph.addEdge(new GraphEdge(sourceVertex, vertex, 0, Infinity));
                 }
             }
@@ -310,21 +336,20 @@ export class TemporalSampling extends React.Component<ITemporalSamplingProps, IT
             // connect level2 outgoing vertices to sink
             if (i === this.props.numberOfLevels - 2) {
                 let vertex: TemporalNetworkVertex;
-                for (vertex of level2OutgoingVertices) {
+                for (vertex of level2IncomingVertices) {
                     newGraph.addEdge(new GraphEdge(vertex, sinkVertex, 0, Infinity));
                 }
             }
             
             for (let level1OutgoingVertex of level1OutgoingVertices) {
                 for (let level2IncomingVertex of level2IncomingVertices) {
-                    if (Math.abs(level1OutgoingVertex.x - level2IncomingVertex.x) <= this.state.r) {
+                    if (Math.abs(level1OutgoingVertex.x - level2IncomingVertex.x) <= this.state.r + this.state.delta) {
                         newGraph.addEdge(new GraphEdge(level1OutgoingVertex, level2IncomingVertex, 0, Infinity));
                     }
                 }
             }
-
-            
         }
+        this.setState({networkGraph: newGraph});
     }
 
     computeTwoRNet(points: {[id: string]: {x: number, y: number}}, r: number): {id: string, x: number, y: number}[] {
