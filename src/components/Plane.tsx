@@ -14,7 +14,8 @@ export interface IPlaneProps {
     onPointsUpdated?: (points: {[id: string]: {x: number, y: number}}) => void,
     x?: number,
     y?: number,
-    padding?: number
+    padding?: number,
+    onWidthUpdated?: (width: number) => void
 }
 
 export interface IPlaneState {
@@ -63,6 +64,7 @@ export abstract class Plane<Props extends IPlaneProps, State extends IPlaneState
         x: 0,
         y: 0,
         padding: 10,
+        onWidthUpdated: () => {}
     }
 
     constructor(props: Props) {
@@ -241,7 +243,9 @@ export abstract class Plane<Props extends IPlaneProps, State extends IPlaneState
                     newState['points'][id] = {x: prevState.points[id].x * scale, y: prevState.points[id].y}
                 })
             } return newState;
-        })
+        });
+
+        (this.props.onWidthUpdated as (width: number) => {})(this.state.width);
     }
 
     public getSvgNode() {

@@ -5,13 +5,15 @@ import {Point} from './Point';
 
 export interface ITemporalSampleState extends IPlaneState {
     show2RNet: boolean,
-    r: number
+    r: number,
+    twoRNet: {id: string, x: number, y: number}[]
 }
 
 export interface ITemporalSampleProps extends IPlaneProps {
     show2RNet: boolean,
     r: number,
-    centerColor?: string
+    centerColor?: string,
+    twoRNet: {id: string, x: number, y: number}[],
 }
 
 export class TemporalSample extends Plane1D<ITemporalSampleProps, ITemporalSampleState> {
@@ -22,7 +24,8 @@ export class TemporalSample extends Plane1D<ITemporalSampleProps, ITemporalSampl
             points: state.points,
             width: state.width,
             show2RNet: this.props.show2RNet,
-            r: this.props.r
+            r: this.props.r,
+            twoRNet: []
         }
     }
 
@@ -32,11 +35,13 @@ export class TemporalSample extends Plane1D<ITemporalSampleProps, ITemporalSampl
         x: 0,
         y: 0,
         padding: 10,
-        centerColor: 'black'
+        centerColor: 'black',
+        onWidthUpdated: () => {},
+        onTwoRNetUpdated: () => {}
     }
 
     static getDerivedStateFromProps(nextProps: ITemporalSampleProps, prevState: ITemporalSampleState) {
-        let returnState = {};
+        let returnState = {}
         if (nextProps.show2RNet !== prevState.show2RNet) {
             returnState['show2RNet'] = nextProps.show2RNet;
         }
@@ -44,69 +49,15 @@ export class TemporalSample extends Plane1D<ITemporalSampleProps, ITemporalSampl
             console.log('changing radius');
             returnState['r'] = nextProps.r
         };
+        returnState['twoRNet'] = nextProps.twoRNet;
         return returnState;
-    }
-
-    computeRNet(r: number): {id: string, x: number, y: number}[] {
-        let hashTable = {};
-        interface Result {
-            value: number,
-            solution: {id: string, x: number, y: number}[]
-        }
-
-        let recurse = function(points: {id: string, x: number, y: number}[], r: number): Result {
-            // base case
-            if (points.length === 0 || points.length === 1) return {value: points.length, solution:points};
-
-            let hashString = '';
-            let point: {id: string, x: number, y: number};
-            for (point of points) hashString += point.x + '-';
-            if (hashTable[hashString]) /* already computed */ return hashTable[hashString];
-
-            // not computed yet
-            let currentPoint = points.pop() as {id: string, x: number, y: number};
-            let res1: Result = recurse(points.concat(), r); // don't add this vertex to the r-net
-            
-            let points_ = [];
-            for (let i=0; i<points.length; i++) {
-                if (points[i].x - currentPoint.x <= r) break;
-                points_.push(points[i]);
-            }
-            points_.sort((a: {x: number, y: number}, b: {x: number, y: number}) => {
-                return b.x - a.x;
-            })
-            let res2: Result = recurse(points_, r); // add this vertex to the r-net
-
-            let max = Math.max(res1.value, res2.value + 1);
-
-            let returnValue: Result;
-            if (max === res1.value) returnValue = res1;
-            else returnValue = {value: res2.value + 1, solution: res2.solution.concat([currentPoint])};
-            hashTable[hashString] = returnValue;
-            return returnValue;
-        } 
-
-        return recurse(
-            Object.keys(this.state.points)
-            .map((id: string): {id: string, x: number, y: number} => {
-                let point = this.state.points[id];
-                return {id: id, x: point.x, y: point.y};
-            })
-            .concat()
-            .sort((a: {x: number, y: number}, b: {x: number, y: number}): number => {
-            return b.x - a.x;
-        }), r)
-        .solution
-        .sort((a: {x: number, y: number}, b: {x: number, y: number}): number => {
-            return b.x - a.x;
-        })
-        .reverse();
     }
 
     getRenderedPoints() {
         if (!this.state.show2RNet) return super.getRenderedPoints();
 
-        let twoRNet = this.computeRNet(this.state.r * 2);
+        let twoRNet = this.state.twoRNet;
+
         console.log(twoRNet);
         return (
             <svg>
